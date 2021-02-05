@@ -14,7 +14,7 @@ const Apps = ({ match }) => (
         component={lazy(() => import(`./clientgroups`))}
       />
       <Route
-        path={`${match.url}/settings`}
+        path={`${match.url}/settings/:id`}
         component={lazy(() => import(`./settings`))}
       />
       <Redirect from={`${match.url}`} to={`${match.url}/clientlist`} />

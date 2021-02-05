@@ -5,10 +5,6 @@ import {
   MailOutlined,
   UserOutlined,
   CompassOutlined,
-  CalendarOutlined,
-  FacebookOutlined,
-  InstagramOutlined,
-  TwitterOutlined,
   GlobalOutlined,
   IdcardOutlined,
 } from '@ant-design/icons';
@@ -19,14 +15,9 @@ export class UserView extends Component {
       data: { name, username, id, company, phone, website, email, address = {} } = {},
       visible,
       close,
-      data,
     } = this.props;
 
     const { city, street, suite, zipcode } = address;
-
-    console.log(data);
-
-    // <IdcardOutlined />
 
     return (
       <Drawer

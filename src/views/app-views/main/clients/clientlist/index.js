@@ -1,22 +1,39 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { getClients, deleteClient, viewClient, hideClient } from 'redux/actions/Clients';
-import { Card, Table, Tag, Tooltip, message, Button } from 'antd';
-import { EyeOutlined, DeleteOutlined } from '@ant-design/icons';
-import moment from 'moment';
+import {
+  getClients,
+  deleteClient,
+  viewClient,
+  hideClient,
+  resetFields,
+} from 'redux/actions/Clients';
+import { Card, Table, Tooltip, Button } from 'antd';
+import { EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { useHistory } from 'react-router-dom';
 import UserView from './UserView';
 import AvatarStatus from 'components/shared-components/AvatarStatus';
-// import userData from 'assets/data/user-list.data.json';
-
 import Loading from 'components/shared-components/Loading';
 
-const UserList = ({ clients, getClients, deleteClient, viewClient, hideClient }) => {
+const UserList = ({
+  clients,
+  getClients,
+  deleteClient,
+  viewClient,
+  hideClient,
+  resetFields,
+}) => {
   const { list, loading, active_client, show_profile } = clients;
+
+  const history = useHistory();
+  const openSettings = (id) => () =>
+    history.push(`/app/main/clients/settings/${id}/edit-profile`);
 
   const clientsArr = Object.values(list);
 
   useEffect(() => {
     getClients();
+
+    return () => resetFields();
   }, []);
 
   const deleteUser = (userId) => deleteClient(`${userId}`);
@@ -28,7 +45,6 @@ const UserList = ({ clients, getClients, deleteClient, viewClient, hideClient })
       title: 'User',
       dataIndex: 'name',
       render: (_, record) => {
-        // console.log(_, record);
         return (
           <div className='d-flex'>
             <AvatarStatus
@@ -85,7 +101,7 @@ const UserList = ({ clients, getClients, deleteClient, viewClient, hideClient })
     {
       title: '',
       dataIndex: 'actions',
-      render: (_, elm) => (
+      render: (_, record) => (
         <div className='text-right'>
           <Tooltip title='View'>
             <Button
@@ -93,19 +109,29 @@ const UserList = ({ clients, getClients, deleteClient, viewClient, hideClient })
               className='mr-2'
               icon={<EyeOutlined />}
               onClick={() => {
-                viewUserProfile(elm.id);
+                viewUserProfile(record.id);
               }}
               size='small'
+            />
+          </Tooltip>
+          <Tooltip title='Edit'>
+            <Button
+              danger
+              className='mr-2'
+              icon={<EditOutlined />}
+              /* */
+              size='small'
+              onClick={openSettings(record.id)}
             />
           </Tooltip>
           <Tooltip title='Delete'>
             <Button
               danger
               icon={<DeleteOutlined />}
-              onClick={() => {
-                deleteUser(elm.id);
-              }}
               size='small'
+              onClick={() => {
+                deleteUser(record.id);
+              }}
             />
           </Tooltip>
         </div>
@@ -130,12 +156,16 @@ const UserList = ({ clients, getClients, deleteClient, viewClient, hideClient })
   );
 };
 
-// export default UserList;
-
 const mapStateToProps = (state) => ({
   clients: state.clients,
 });
 
-const mapDispatchToProps = { getClients, deleteClient, viewClient, hideClient };
+const mapDispatchToProps = {
+  getClients,
+  deleteClient,
+  viewClient,
+  hideClient,
+  resetFields,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserList);

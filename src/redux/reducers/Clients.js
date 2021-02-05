@@ -5,6 +5,7 @@ import {
   CLIENT_DELETED,
   VIEW_CLIENT,
   HIDE_CLIENT,
+  RESET_FIELDS,
 } from '../constants/Clients';
 
 const initState = {
@@ -22,7 +23,10 @@ const clients = (state = initState, action) => {
       return { ...state, list: arr_to_obj(payload.list) };
 
     case CLIENT_LOADED:
-      return { ...state, client: payload.client };
+      return {
+        ...state,
+        list: { ...state.list, [payload.client.id]: payload.client },
+      };
 
     case SET_LOADING:
       return { ...state, loading: payload.loading };
@@ -47,6 +51,11 @@ const clients = (state = initState, action) => {
         ...state,
         active_client: null,
         show_profile: false,
+      };
+
+    case RESET_FIELDS:
+      return {
+        ...initState,
       };
 
     default:

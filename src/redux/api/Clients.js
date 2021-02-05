@@ -5,10 +5,6 @@ const axios = axios_default.create({
   timeout: 60000,
 });
 
-/* export const request_clients = async () => await axios.get('/users');
-
-export const request_client = async (id) => await axios.get(`/users/${id}`); */
-
 const ClientsApi = {
   get: {
     clients: async () => {
@@ -22,6 +18,9 @@ const ClientsApi = {
   },
   delete: {
     client: async (id) => await axios.delete(`/users/${id}`),
+  },
+  put: {
+    client: async (id, data) => await axios.put(`/users/${id}`, data),
   },
 };
 

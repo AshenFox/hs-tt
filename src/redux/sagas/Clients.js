@@ -1,9 +1,9 @@
-import { all, takeEvery, takeLatest, put, fork, call } from 'redux-saga/effects';
+import { all, takeLatest, put, call } from 'redux-saga/effects';
 import {
   GET_CLIENTS,
   GET_CLIENT,
   DELETE_CLIENT,
-  VIEW_CLIENT,
+  EDIT_CLIENT,
 } from '../constants/Clients';
 import {
   clientsLoaded,
@@ -14,13 +14,32 @@ import {
 import ClientsApi from '../api/Clients';
 import { message } from 'antd';
 
-export function* requestClientsWorker() {
-  yield takeEvery(GET_CLIENTS, function* () {
+export function* getClientsWorker() {
+  yield takeLatest(GET_CLIENTS, function* () {
     try {
       yield put(setLoading(true));
       const clients = yield call(ClientsApi.get.clients);
 
       yield put(clientsLoaded(clients));
+      yield put(setLoading(false));
+    } catch (err) {
+      message.error({ content: `Something went wrong`, duration: 2 });
+      console.error(err);
+    }
+  });
+}
+
+export function* getClientWorker() {
+  yield takeLatest(GET_CLIENT, function* (action) {
+    const {
+      payload: { id },
+    } = action;
+
+    try {
+      yield put(setLoading(true));
+      const client = yield call(ClientsApi.get.client, id);
+
+      yield put(clientLoaded(client));
       yield put(setLoading(false));
     } catch (err) {
       message.error({ content: `Something went wrong`, duration: 2 });
@@ -46,24 +65,28 @@ export function* deleteClientWorker() {
   });
 }
 
-/* export function* viewClientWorker() {
-  yield takeLatest(VIEW_CLIENT, function* (action) {
+export function* editClientWorker() {
+  yield takeLatest(EDIT_CLIENT, function* (action) {
     const {
-      payload: { id },
+      payload: { id, data, key, history },
     } = action;
 
     try {
-      yield put(clientDeleted(id));
+      yield call(ClientsApi.put.client, id, data);
+      message.success({ content: 'Done!', key, duration: 2 });
+      history.push('/app/main/clients/clientlist');
     } catch (err) {
+      message.error({ content: `Something went wrong`, duration: 2 });
       console.error(err);
     }
   });
-} */
+}
 
 export default function* rootSaga() {
   yield all([
-    fork(requestClientsWorker),
-    fork(deleteClientWorker),
-    /* fork(viewClientWorker), */
+    getClientsWorker(),
+    getClientWorker(),
+    deleteClientWorker(),
+    editClientWorker(),
   ]);
 }

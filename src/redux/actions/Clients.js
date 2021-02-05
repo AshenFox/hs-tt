@@ -5,9 +5,11 @@ import {
   CLIENT_LOADED,
   SET_LOADING,
   DELETE_CLIENT,
+  EDIT_CLIENT,
   CLIENT_DELETED,
   VIEW_CLIENT,
   HIDE_CLIENT,
+  RESET_FIELDS,
 } from '../constants/Clients';
 
 // saga
@@ -17,12 +19,17 @@ export const getClients = () => ({
 
 export const getClient = (id) => ({
   type: GET_CLIENT,
-  id,
+  payload: { id },
 });
 
 export const deleteClient = (id) => ({
   type: DELETE_CLIENT,
   payload: { id },
+});
+
+export const editClient = (id, data, key, history) => ({
+  type: EDIT_CLIENT,
+  payload: { id, data, key, history },
 });
 
 // store
@@ -53,4 +60,8 @@ export const viewClient = (id) => ({
 
 export const hideClient = () => ({
   type: HIDE_CLIENT,
+});
+
+export const resetFields = () => ({
+  type: RESET_FIELDS,
 });

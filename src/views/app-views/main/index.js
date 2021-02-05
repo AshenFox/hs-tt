@@ -26,7 +26,7 @@ const Apps = ({ match }) => (
         component={lazy(() => import(`./promocodes`))}
       />
       <Route path={`${match.url}/staff`} component={lazy(() => import(`./staff`))} />
-      <Redirect from={`${match.url}`} to={`${match.url}/dashboard`} />
+      <Redirect from={`${match.url}`} to={`${match.url}/clients`} />
     </Switch>
   </Suspense>
 );
